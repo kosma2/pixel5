@@ -118,7 +118,7 @@ namespace pixelSort
                     }
                 }
             }
-            
+
             else if (colPos.color.R == 255)
             {
                 if (colPos.color.G == 0)
@@ -208,7 +208,7 @@ namespace pixelSort
             }
             return mixColPos;
         }
-        public static int ceiling(List<ColorPos> list, int clumpSize)
+        public static int ceiling(List<List<ColorPos>> list, int clumpSize)
         // divide the list by five 
         {
             double div = (double)list.Count / clumpSize;
@@ -224,7 +224,7 @@ namespace pixelSort
             //dividing size of orgList by clumpSize
             int rang = 0;
             int listLenght = ceiling(orgList, clumpSize) - 1;
-            for (int l = 0; l < listLenght ; l++)
+            for (int l = 0; l < listLenght; l++)
             {
                 List<ColorPos> output = orgList.GetRange(rang, clumpSize).ToList();
                 clusterList.Add(output);
@@ -232,18 +232,45 @@ namespace pixelSort
             }
             return clusterList;
         }
-
+        /// in progress
+        // splitting a list of Points into smaller cluster lists based on clumpSize
+        public static Point[][] clusterize(List<ColorPos> orgList, int clumpSize)
+        {
+            //create an array for new points
+            Point[] orgPoints = new Point[orgList.Count - 1];
+            //convert poscol to points
+            for (int i = 0; i < orgList.Count(); i++)
+            {
+                ColorPos clr = orgList[i];
+                Point pt = new(clr.point.X * spacing, clr.point.Y * spacing);
+                orgPoints[i] = pt;
+            }
+            //do clumps
+            // int listLenght = ceiling(orgList, clumpSize) - 1;
+            Point[][] clusterArr = new Point[orgList.Count - 1][4];
+            for (int l = 0; l < orgPoints.Lenght; l++)
+            {
+                for (int n = 0; n < clumpSize; n++)
+                {
+                    clusterArr[l][n] = orgPoints[l * clumpSize + n];
+                }
+            }
+            return clusterArr;
+        }
+        //// in progress
+        ///combine up+down
         // converting ListList of colPos into a single list of Points
+        // converting a colPos list of a color into a 2d array of points
         public static Point[] clusterPointize(List<List<ColorPos>> clusters)
         {
             //count total sum of items in the list
             int total = 0;
-            for (int i = 0; i < clusters.Count ; i++)
+            for (int i = 0; i < clusters.Count; i++)
             {
-                for (int j = 0; j < clusters[i].Count ; j++)
+                for (int j = 0; j < clusters[i].Count; j++)
                     total++;
             }
-            System.Console.WriteLine("color total is "+ total);
+            System.Console.WriteLine("color total is " + total);
 
             Point[] clusterPoints = new Point[total];
             int cnt = 0;
@@ -264,18 +291,26 @@ namespace pixelSort
 
             return clusterPoints;
         }
-        public static void Draw(List<ColorPos> colList, Graphics g){
-                Color colr = colList[0].color;
-                // splitting a list of ColorPos into cluster lists
-                List<List<ColorPos>> clusters = clusterize(colList,20);
-                // creating a Points array from cluster colorPos lists
-                System.Console.WriteLine("clusters"+clusters.Count);
-                Point[] clusterPoints = clusterPointize(clusters);
-                //Shuffle(clusterPoints);
+        public static void Draw(List<ColorPos> colList, Graphics g)
+        {
+            Color colr = colList[0].color;
+            // splitting a list of ColorPos into cluster lists
 
+            List<List<ColorPos>> clusters = clusterize(colList, 20);
+            //try Point[][] clusterArr = clusterize colList,20);
+
+            // creating a Points array from cluster colorPos lists
+            System.Console.WriteLine("clusters" + clusters.Count);
+            //Point[] clusterPoints = clusterPointize(clusters);
+            //Shuffle(clusterPoints);
+
+            ///try
+            for clusterPoints[][].Length
+                    for clusterpoints[].Length
+                        tempCluster[] = clusterPoints
                 using Pen peni = new(colr);
-                g.DrawLines(peni, clusterPoints);
-                }
+            g.DrawLines(peni, clusterPoints);
+        }
 
 
 
@@ -323,11 +358,11 @@ namespace pixelSort
                 listOfLists.Add(sortColPos100);
                 //listOfLists.Add(sortColPos000);*/
 
-                Draw(sortColPos111,g);
-                Draw(sortColPos000,g);
-                Draw(sortColPos110,g);
-                Draw(sortColPos100,g);
-                
+                Draw(sortColPos111, g);
+                Draw(sortColPos000, g);
+                Draw(sortColPos110, g);
+                Draw(sortColPos100, g);
+
 
 
                 //System.Console.WriteLine(clusterPoints.Count());
