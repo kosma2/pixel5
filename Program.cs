@@ -80,7 +80,7 @@ namespace pixelSort
 
         public static void colorsInBins(ColorPos colorPos, int bin)
         {
-//_---- make this switch or case
+            //_---- make this switch or case
             if (bin == 000) { sortColPos000.Add(colorPos); }
             if (bin == 001) { sortColPos001.Add(colorPos); }
             if (bin == 011) { sortColPos011.Add(colorPos); }
@@ -222,9 +222,8 @@ namespace pixelSort
              double ceiling = Math.Ceiling(div);
              int ceilInt = (int)ceiling;
              return ceilInt;
-         }*/
+         }
 
-        /*// splitting a list of ColorPos into smaller cluster lists based on clumpSize
         public static List<List<ColorPos>> clusterize(List<ColorPos> orgList, int clumpSize)
         {
             List<List<ColorPos>> clusterList = new List<List<ColorPos>>();
@@ -238,14 +237,13 @@ namespace pixelSort
                 rang = rang + clumpSize;
             }
             return clusterList;
-        }
+        }*/
 
-        /// in progress*/
+        // splitting a list of ColorPos into smaller cluster lists based on batchSize
 
         public static Point[,] clusterPrize(List<ColorPos> orgList, int batchSize)
         {
-//--- change this array to list for RemoveAt
-            Point[] orgPoints = new Point[orgList.Count - 1];
+            List<Point> orgPoints = new List<Point>();
             //create a Points array from colPos orgList WITH SPACING
             for (int i = 0; i < orgList.Count - 1; i++)
             {
@@ -253,44 +251,43 @@ namespace pixelSort
                 Point pt = new(clr.point.X * spacing, clr.point.Y * spacing);
                 orgPoints[i] = pt;
             }
-            if(orgPoints.Length > 0){
-                for(int k = 0;k<batchSize-1;k++){
-                    clusterArr[Semaphore,k]= cur;
-                    orgPoints.RemoveAt[0];
+            // this list will get turned into the output array
+            List<List<Point>> clusterList = new List<List<Point>>();
+            //int listLenght = ceiling(orgList.Count, batchSize) - 1;
+            int orgListCount = 0;
+            int dCount = 0;
+            while (orgPoints.Count != 0)
+            {
 
-                }
-            }
-            int listLenght = ceiling(orgList.Count, batchSize) - 1;
-            Point[,] clusterArr = new Point[listLenght, batchSize - 1];
-            //for (int i = 0; i < orgPoints.Length; i++)
-            //{
-                int orgListCount = 0;
-                for (int l = 0; l < listLenght; l++)
+                Point cur = orgPoints[0];
+                //-2 because [0] is cur
+                for (int k = 1; k < batchSize - 2; k++)
                 {
-                    Point[] tempCluster = new Point[batchSize - 1];
-                    //Point cur = orgPoints[j*nameof orsometing];
+                    //if (k != 0){
+                    clusterList[dCount, 0] = cur;
 
-                    for (int n = 0; n < batchSize; n++)
+                    //start loop at 1 bc [0] is cur
+                    for (int i = 1; i < orgPoints.Count; i++)
                     {
-                        if (n != 0)
-                        {
-                            Point cur = orgPoints[l];
-                            Point prev = orgPoints[j - 1somethig];
+                        Point proxPoint = orgPoints[i];
 
-                            if (cur.X + 4 < prev.X || cur.X - 4 > prev.X)
+                        if (cur.X + 4 < proxPoint.X || cur.X - 4 > proxPoint.X)
+                        {
+                            if (cur.Y + 4 > proxPoint.Y || cur.Y - 4 < proxPoint.Y)
                             {
-                                if (cur.Y + 4 > prev.Y || cur.Y - 4 < prev.Y)
-                                {
-                                    clusterArr[l, n] = cur;
-                                    orgPoints.RemoveAt(0);
-                                }
+
+                                clusterList[dCount, k] = proxPoint;
+                                orgPoints.RemoveAt(i);
                             }
                         }
-                        clusterArr[l, n] = orgPoints[(l * batchSize + n)];
-                        System.Console.WriteLine("clusterArr " + l + "," + n + "is orgPoints" + (l * batchSize + n));
+                        break;
                     }
                 }
-           // }
+                orgPoints.RemoveAt(0);
+                dCount++;
+            }
+            return clusterList.ToArray();
+            //clusterArr[l, n] = orgPoints[(l * batchSize + n)];
         }
 
         // splitting a list of Points into smaller cluster lists based on clumpSize*/
@@ -357,7 +354,7 @@ namespace pixelSort
             // splitting a list of ColorPos into cluster lists
             int colListLength = colList.Count;
             Point[,] pointClusters = new Point[ceiling(colList.Count, globClusterSize), globClusterSize];
-            pointClusters = clusterize(colList, globClusterSize);
+            pointClusters = clustePrize(colList, globClusterSize);
             //System.Console.WriteLine("clusters" + clusters.Count);
             for (int i = 0; i < pointClusters.GetLength(0); i++)
             {
@@ -368,11 +365,11 @@ namespace pixelSort
                     Point cur = pointClusters[i, j];
                     if (j != 0)
                     {
-                        Point prev = pointClusters[i, j - 1];
+                        Point proxPoint = pointClusters[i, j - 1];
 
-                        if (cur.X + 4 < prev.X || cur.X - 4 > prev.X)
+                        if (cur.X + 4 < proxPoint.X || cur.X - 4 > proxPoint.X)
                         {
-                            if (cur.Y + 4 > prev.Y || cur.Y - 4 < prev.Y)
+                            if (cur.Y + 4 > proxPoint.Y || cur.Y - 4 < proxPoint.Y)
                             {
                                 break;
                             }
